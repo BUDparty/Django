@@ -1,0 +1,98 @@
+Subject: [PATCH] 챗봇, 진행도창(ui만)
+---
+Index: api/models.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/api/models.py b/api/models.py
+--- a/api/models.py	(revision a7aeb9bd1925d2f1b1117fee57c60f1f3f73c74a)
++++ b/api/models.py	(date 1720948390011)
+@@ -14,3 +14,5 @@
+     def __str__(self):
+         return self.korean_word
+ 
++
++
+Index: BUDparty/settings.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/BUDparty/settings.py b/BUDparty/settings.py
+--- a/BUDparty/settings.py	(revision a7aeb9bd1925d2f1b1117fee57c60f1f3f73c74a)
++++ b/BUDparty/settings.py	(date 1720835592517)
+@@ -9,6 +9,11 @@
+ os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(BASE_DIR, 'path_to_your_google_cloud_credentials.json')
+ 
+ 
++#openAI key
++OPENAI_API_KEY = 'sk-proj-bOtVoAbqkiIn7YBQZPHRT3BlbkFJHPpKkijp3MLaxoloxcwr'
++
++
++
+ # Django 프로젝트의 비밀 키 설정
+ SECRET_KEY = 'your-secret-key'
+ 
+@@ -133,6 +138,10 @@
+         'rest_framework.renderers.JSONRenderer',
+         'rest_framework.renderers.BrowsableAPIRenderer',
+     ),
++    'DEFAULT_PERMISSION_CLASSES': [
++        'rest_framework.permissions.AllowAny',
++    ],
++
+ }
+ CORS_ALLOWED_ORIGINS = [
+     'http://localhost:8000',
+Index: api/urls.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/api/urls.py b/api/urls.py
+--- a/api/urls.py	(revision a7aeb9bd1925d2f1b1117fee57c60f1f3f73c74a)
++++ b/api/urls.py	(date 1720971353299)
+@@ -3,6 +3,7 @@
+ from .views import ChapterViewSet, WordViewSet
+ 
+ 
++
+ router = DefaultRouter()
+ router.register(r'chapters', ChapterViewSet)
+ router.register(r'words', WordViewSet)
+@@ -11,4 +12,5 @@
+     path('', include(router.urls)),
+     path('chapters/<int:pk>/words/', ChapterViewSet.as_view({'get': 'words'}), name='chapter-words'),
+     path('words/<int:pk>/save/', WordViewSet.as_view({'post': 'save_word'})),
++
+ ]
+\ No newline at end of file
+Index: api/views.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/api/views.py b/api/views.py
+--- a/api/views.py	(revision a7aeb9bd1925d2f1b1117fee57c60f1f3f73c74a)
++++ b/api/views.py	(date 1720971332803)
+@@ -4,7 +4,12 @@
+ from rest_framework import viewsets
+ from .models import Word, Chapter
+ from .serializers import WordSerializer, ChapterSerializer
++
+ import openai
++from rest_framework.views import APIView
++from rest_framework.response import Response
++from rest_framework import status
++from django.conf import settings
+ 
+ class WordViewSet(viewsets.ModelViewSet):
+     queryset = Word.objects.all()
+@@ -37,3 +42,6 @@
+ 
+ 
+ 
++
++
++
