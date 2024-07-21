@@ -21,7 +21,8 @@ SECRET_KEY = 'your-secret-key'
 DEBUG = True
 
 # 허용된 호스트 설정 (배포 시에는 특정 도메인을 설정)
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '10.0.2.2']
 
 # 설치된 애플리케이션 목록
 INSTALLED_APPS = [
@@ -89,7 +90,7 @@ DATABASES = {
         'NAME': 'budparty',
         'USER': 'root',
         'PASSWORD': '5909',
-        'HOST': 'localhost',
+        'HOST': '34.46.171.130',
         'PORT': '3306',  # MariaDB 기본 포트
         'OPTIONS': {
             'charset': 'utf8mb4',
@@ -145,9 +146,14 @@ REST_FRAMEWORK = {
 }
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:8000',
-    'http://127.0.0.1:8000',
+    'http://127.0.0.1:8000'
+
     # 필요에 따라 다른 원본 추가
 ]
+
+
+
+
 # MEDIA 설정
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
